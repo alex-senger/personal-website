@@ -72,6 +72,24 @@ Set `SITE_URL` in [docker-compose.yml](docker-compose.yml) to the public URL —
 
 Compatible with Podman: `podman compose up -d --build`.
 
+## CI
+
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on every push and pull request to `main`:
+
+1. **Type check & build** — `astro check` + `astro build`, with the `dist/` output uploaded as an artifact
+2. **Docker image** — verifies the image builds on PRs; on pushes to `main` it also publishes to GitHub Container Registry as `ghcr.io/<owner>/<repo>:latest` (plus a `sha-…` tag)
+
+Set the repository variable `SITE_URL` (Settings → Secrets and variables → Actions → Variables) to bake the production URL into the published image; it defaults to `https://example.com`. A homeserver can then deploy by pulling the prebuilt image instead of building locally:
+
+```yaml
+services:
+  website:
+    image: ghcr.io/<owner>/<repo>:latest
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+```
+
 ## Project structure
 
 ```
