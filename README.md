@@ -54,7 +54,7 @@ One Markdown file per project and locale under `src/content/projects/{en,de}/`, 
 
 ### CV
 
-The CV page is rendered from structured data in [src/data/cv.ts](src/data/cv.ts) (both locales). The downloadable PDFs (`public/cv-en.pdf`, `public/cv-de.pdf`) are compiled from Typst sources that are intentionally **not tracked in this repository** — place the PDFs into `public/` before building a deployable image. Without them the site builds fine; only the download links return 404.
+The CV page is rendered from structured data in [src/data/cv.ts](src/data/cv.ts) (both locales). The downloadable PDFs (`public/downloads/cv-{en,de}.pdf`) are compiled from Typst sources that are intentionally **not tracked in this repository**. Without them the site builds fine; only the download links return 404. In production the `downloads/` directory is bind-mounted into the container (see Deployment).
 
 ### Site strings
 
@@ -89,12 +89,14 @@ services:
     ports:
       - '8080:80'
     # The CV PDFs are not tracked in the repo (and therefore not in the
-    # image); place them on the host and mount them over the paths nginx
-    # serves. The host files must exist BEFORE the container starts.
+    # image); keep them in a directory on the host and mount the directory.
+    # A directory mount (unlike single-file mounts, which pin the inode)
+    # picks up replaced files without a container restart.
     volumes:
-      - /srv/website/cv-en.pdf:/usr/share/nginx/html/cv-en.pdf:ro
-      - /srv/website/cv-de.pdf:/usr/share/nginx/html/cv-de.pdf:ro
+      - /srv/website/downloads:/usr/share/nginx/html/downloads:ro
 ```
+
+To update the PDFs later, copy the new files into `/srv/website/downloads/` on the host — no redeploy needed (allow up to 10 minutes of HTTP cache, or hard-refresh).
 
 ## Project structure
 

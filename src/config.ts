@@ -6,9 +6,11 @@ export const SITE_CONFIG = {
     github: 'https://github.com/alex-senger',
     linkedin: 'https://www.linkedin.com/in/alexsenger',
   },
-  // Path of the downloadable CV PDF inside public/ (drop your file there).
+  // Downloadable CV PDFs. They live under /downloads/ so the whole directory
+  // can be bind-mounted on the server (single-file mounts pin the inode and
+  // go stale when the file is replaced).
   cvPdf: {
-    en: '/cv-en.pdf',
-    de: '/cv-de.pdf',
+    en: '/downloads/cv-en.pdf',
+    de: '/downloads/cv-de.pdf',
   },
 } as const;

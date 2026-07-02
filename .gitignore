@@ -8,10 +8,10 @@ dist/
 graphify-out/
 
 # CV sources and compiled PDFs — kept out of the public repo because they
-# contain private contact details. Place cv-en.pdf / cv-de.pdf into public/
-# before building for deployment.
+# contain private contact details. Compile into public/downloads/ locally;
+# in production the directory is bind-mounted into the container.
 cv/
-public/cv-*.pdf
+public/downloads/
 
 # Misc
 npm-debug.log*
