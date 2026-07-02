@@ -30,16 +30,11 @@ export const cv: Record<Locale, CvData> = {
         location: 'Germany',
         from: 'Apr 2024',
         bullets: [
-          'Currently on sabbatical from this role to complete the MSc in Artificial Intelligence at the University of Liverpool.',
-          'Responsible for the operation of the monitoring system (Elastic Stack + Icinga 2) for an enterprise client.',
-          'Designed deployment strategies and set up PostgreSQL clusters in Kubernetes using CloudNativePG and Argo CD for a client in the retail sector.',
-          'Conducted a proof-of-concept evaluation of high-availability database solutions (Patroni, YugabyteDB, CockroachDB) for a client in the financial sector.',
-          'Created API contracts and initial code examples for an AI Model Manager project.',
-          'Built internal web apps with Python, Streamlit, Django, and React for employee profiles and project management.',
-          'Created automation tools for PDF parsing, data extraction, and XML/Word generation using Python (pandas, PyPDF2, Jinja2).',
-          'Authored documentation including operational guides and blog articles, and presented results to internal teams.',
-          'Held presentations on technical topics at external meetups and attended industry events.',
-          'Prepared teaching materials and conducted training for clients on Python (Basics and Advanced Programming) and GitLab CI/CD.',
+          'Currently on sabbatical to complete the MSc in Artificial Intelligence at the University of Liverpool.',
+          'Operated the monitoring platform (Elastic Stack + Icinga 2) for an enterprise client.',
+          'Set up PostgreSQL clusters on Kubernetes (CloudNativePG, Argo CD) and designed deployment strategies for a client in the retail sector.',
+          'Evaluated high-availability database solutions (Patroni, YugabyteDB, CockroachDB) in a proof of concept for a client in the financial sector.',
+          'Built internal web apps and automation tooling in Python; delivered client trainings on Python and GitLab CI/CD.',
         ],
       },
       {
@@ -49,8 +44,7 @@ export const cv: Record<Locale, CvData> = {
         from: 'Oct 2023',
         to: 'Mar 2024',
         bullets: [
-          'Conducted tutorials for the "Software Technology" module.',
-          'Prepared exercise sheets, managed schedules, and supported student learning.',
+          'Ran tutorials and prepared exercises for the "Software Technology" module.',
         ],
       },
       {
@@ -136,15 +130,10 @@ export const cv: Record<Locale, CvData> = {
         from: 'Apr 2024',
         bullets: [
           'Derzeit im Sabbatical, um den MSc in Artificial Intelligence an der University of Liverpool abzuschließen.',
-          'Verantwortlich für den Betrieb des Monitoring-Systems (Elastic Stack + Icinga 2) für einen Enterprise-Kunden.',
-          'Deployment-Strategien entworfen und PostgreSQL-Cluster in Kubernetes mit CloudNativePG und Argo CD für einen Kunden im Einzelhandel aufgebaut.',
-          'Proof-of-Concept-Evaluierung von Hochverfügbarkeits-Datenbanklösungen (Patroni, YugabyteDB, CockroachDB) für einen Kunden im Finanzsektor durchgeführt.',
-          'API-Verträge und erste Code-Beispiele für ein AI-Model-Manager-Projekt erstellt.',
-          'Interne Web-Apps mit Python, Streamlit, Django und React für Mitarbeiterprofile und Projektmanagement gebaut.',
-          'Automatisierungstools für PDF-Parsing, Datenextraktion und XML/Word-Generierung mit Python (pandas, PyPDF2, Jinja2) entwickelt.',
-          'Dokumentation wie Betriebshandbücher und Blogartikel verfasst und Ergebnisse vor internen Teams präsentiert.',
-          'Vorträge zu technischen Themen auf externen Meetups gehalten und Branchenveranstaltungen besucht.',
-          'Schulungsunterlagen erstellt und Kundentrainings zu Python (Grundlagen und Fortgeschrittene Programmierung) sowie GitLab CI/CD durchgeführt.',
+          'Monitoring-Plattform (Elastic Stack + Icinga 2) für einen Enterprise-Kunden betrieben.',
+          'PostgreSQL-Cluster auf Kubernetes (CloudNativePG, Argo CD) aufgebaut und Deployment-Strategien für einen Kunden im Einzelhandel entworfen.',
+          'Hochverfügbarkeits-Datenbanklösungen (Patroni, YugabyteDB, CockroachDB) in einem Proof of Concept für einen Kunden im Finanzsektor evaluiert.',
+          'Interne Web-Apps und Automatisierungstools in Python gebaut; Kundentrainings zu Python und GitLab CI/CD durchgeführt.',
         ],
       },
       {
@@ -154,8 +143,7 @@ export const cv: Record<Locale, CvData> = {
         from: 'Okt 2023',
         to: 'Mär 2024',
         bullets: [
-          'Tutorien für das Modul „Softwaretechnologie" durchgeführt.',
-          'Übungszettel vorbereitet, Termine koordiniert und Studierende beim Lernen unterstützt.',
+          'Tutorien geleitet und Übungszettel für das Modul „Softwaretechnologie" vorbereitet.',
         ],
       },
       {
