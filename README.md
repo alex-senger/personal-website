@@ -88,6 +88,12 @@ services:
     restart: unless-stopped
     ports:
       - '8080:80'
+    # The CV PDFs are not tracked in the repo (and therefore not in the
+    # image); place them on the host and mount them over the paths nginx
+    # serves. The host files must exist BEFORE the container starts.
+    volumes:
+      - /srv/website/cv-en.pdf:/usr/share/nginx/html/cv-en.pdf:ro
+      - /srv/website/cv-de.pdf:/usr/share/nginx/html/cv-de.pdf:ro
 ```
 
 ## Project structure
