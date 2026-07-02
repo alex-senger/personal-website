@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { entrySlug, readingMinutes } from '@/lib/content';
+import { formatDate, localePath, useTranslations, getLocaleFromUrl } from '@/i18n/utils';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  revealDelay?: number;
+}
+
+const { post, revealDelay = 0 } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const href = localePath(locale, `/blog/${entrySlug(post)}`);
+---
+
+<article class="card reveal group relative p-6" style={`--reveal-delay: ${revealDelay}ms`}>
+  <div class="flex items-center gap-3 font-mono text-xs text-ink-500">
+    <time datetime={post.data.pubDate.toISOString()}>
+      {formatDate(post.data.pubDate, locale)}
+    </time>
+    <span aria-hidden="true">·</span>
+    <span>{readingMinutes(post.body)} {t('blog.minRead')}</span>
+  </div>
+  <h3 class="mt-3 text-lg font-semibold text-ink-100">
+    <a href={href} class="after:absolute after:inset-0 group-hover:text-accent-300 transition-colors">
+      {post.data.title}
+    </a>
+  </h3>
+  <p class="mt-2 line-clamp-3 text-sm text-ink-500">{post.data.description}</p>
+  {
+    post.data.tags.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2">
+        {post.data.tags.map((tag) => (
+          <span class="rounded-full border border-surface-600/50 px-2.5 py-0.5 font-mono text-xs text-ink-500">
+            #{tag}
+          </span>
+        ))}
+      </div>
+    )
+  }
+</article>

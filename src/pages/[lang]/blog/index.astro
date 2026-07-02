@@ -1,0 +1,48 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { locales, type Locale } from '@/i18n/ui';
+import { localePath, useTranslations } from '@/i18n/utils';
+import { getBlogPosts } from '@/lib/content';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const posts = await getBlogPosts(lang);
+const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+---
+
+<BaseLayout title={t('blog.title')} description={t('blog.description')}>
+  <div class="mx-auto max-w-5xl px-5 pt-32 pb-24">
+    <h1 class="animate-fade-up text-4xl font-bold tracking-tight text-ink-100">
+      <span class="text-gradient">{t('blog.title')}</span>
+    </h1>
+    <p class="animate-fade-up mt-3 max-w-xl text-ink-500" style="animation-delay: 120ms">
+      {t('blog.description')}
+    </p>
+
+    {
+      tags.length > 0 && (
+        <div class="animate-fade-up mt-8 flex flex-wrap gap-2" style="animation-delay: 240ms">
+          {tags.map((tag) => (
+            <a
+              href={localePath(lang, `/blog/tags/${tag}`)}
+              class="rounded-full border border-surface-600/50 px-3 py-1 font-mono text-xs text-ink-500 transition-colors hover:border-accent-500/60 hover:text-accent-300"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="mt-12 grid gap-5 sm:grid-cols-2">
+      {posts.map((post, i) => <PostCard post={post} revealDelay={(i % 2) * 120} />)}
+    </div>
+
+    {posts.length === 0 && <p class="mt-12 text-ink-500">{t('blog.empty')}</p>}
+  </div>
+</BaseLayout>

@@ -1,0 +1,15 @@
+services:
+  website:
+    build:
+      context: .
+      args:
+        # Set this to your real public URL — it is baked into the
+        # sitemap, RSS feeds and canonical links.
+        SITE_URL: https://example.com
+    image: personal-website:latest
+    container_name: personal-website
+    restart: unless-stopped
+    ports:
+      # Change the host port (left side) to whatever fits your homeserver,
+      # or remove `ports` entirely and attach your reverse proxy's network.
+      - '8080:80'

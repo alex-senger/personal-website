@@ -1,0 +1,30 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import { locales, type Locale } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+import { getProjects } from '@/lib/content';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const projects = await getProjects(lang);
+---
+
+<BaseLayout title={t('projects.title')} description={t('projects.description')}>
+  <div class="mx-auto max-w-5xl px-5 pt-32 pb-24">
+    <h1 class="animate-fade-up text-4xl font-bold tracking-tight text-ink-100">
+      <span class="text-gradient">{t('projects.title')}</span>
+    </h1>
+    <p class="animate-fade-up mt-3 max-w-xl text-ink-500" style="animation-delay: 120ms">
+      {t('projects.description')}
+    </p>
+
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project, i) => <ProjectCard project={project} revealDelay={(i % 3) * 120} />)}
+    </div>
+  </div>
+</BaseLayout>

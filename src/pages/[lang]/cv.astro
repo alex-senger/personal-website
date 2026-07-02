@@ -1,0 +1,174 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { locales, type Locale } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+import { cv, type CvEntry } from '@/data/cv';
+import { SITE_CONFIG } from '@/config';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const data = cv[lang];
+
+function period(entry: CvEntry): string {
+  return `${entry.from} — ${entry.to ?? t('cv.present')}`;
+}
+---
+
+<BaseLayout title={t('cv.title')} description={t('cv.description')}>
+  <div class="mx-auto max-w-3xl px-5 pt-32 pb-24">
+    <div class="animate-fade-up flex flex-wrap items-center justify-between gap-4">
+      <h1 class="text-4xl font-bold tracking-tight text-ink-100">
+        <span class="text-gradient">{t('cv.title')}</span>
+      </h1>
+      <a
+        href={SITE_CONFIG.cvPdf[lang]}
+        download
+        class="rounded-xl border border-accent-500/50 px-5 py-2.5 font-mono text-sm text-accent-300 transition hover:bg-accent-500/10"
+      >
+        ↓ {t('cv.download')}
+      </a>
+    </div>
+    <p class="animate-fade-up mt-3 max-w-xl text-ink-500" style="animation-delay: 120ms">
+      {t('cv.description')}
+    </p>
+
+    <!-- Experience -->
+    <section class="mt-16">
+      <h2 class="reveal text-xl font-bold text-ink-100">
+        <span class="mr-2 font-mono text-accent-400">§</span>
+        {t('cv.experience')}
+      </h2>
+      <ol class="mt-8 space-y-10 border-l border-surface-600/50 pl-6">
+        {
+          data.experience.map((entry, i) => (
+            <li class="reveal relative" style={`--reveal-delay: ${i * 100}ms`}>
+              <span class="absolute -left-[1.85rem] top-1.5 h-3 w-3 rounded-full border-2 border-accent-500 bg-surface-950" />
+              <p class="font-mono text-xs text-ink-500">{period(entry)}</p>
+              <h3 class="mt-1 font-semibold text-ink-100">{entry.title}</h3>
+              <p class="text-sm text-accent-300">
+                {entry.organization}
+                {entry.location && <span class="text-ink-500"> · {entry.location}</span>}
+              </p>
+              <ul class="mt-3 space-y-1.5 text-sm text-ink-500">
+                {entry.bullets.map((bullet) => (
+                  <li class="flex gap-2">
+                    <span class="text-accent-500">▹</span>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- Education -->
+    <section class="mt-16">
+      <h2 class="reveal text-xl font-bold text-ink-100">
+        <span class="mr-2 font-mono text-accent-400">§</span>
+        {t('cv.education')}
+      </h2>
+      <ol class="mt-8 space-y-10 border-l border-surface-600/50 pl-6">
+        {
+          data.education.map((entry, i) => (
+            <li class="reveal relative" style={`--reveal-delay: ${i * 100}ms`}>
+              <span class="absolute -left-[1.85rem] top-1.5 h-3 w-3 rounded-full border-2 border-violet-500 bg-surface-950" />
+              <p class="font-mono text-xs text-ink-500">{period(entry)}</p>
+              <h3 class="mt-1 font-semibold text-ink-100">{entry.title}</h3>
+              <p class="text-sm text-accent-300">
+                {entry.organization}
+                {entry.location && <span class="text-ink-500"> · {entry.location}</span>}
+              </p>
+              <ul class="mt-3 space-y-1.5 text-sm text-ink-500">
+                {entry.bullets.map((bullet) => (
+                  <li class="flex gap-2">
+                    <span class="text-accent-500">▹</span>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- Other projects -->
+    <section class="mt-16">
+      <h2 class="reveal text-xl font-bold text-ink-100">
+        <span class="mr-2 font-mono text-accent-400">§</span>
+        {t('cv.projects')}
+      </h2>
+      <ol class="mt-8 space-y-10 border-l border-surface-600/50 pl-6">
+        {
+          data.projects.map((entry, i) => (
+            <li class="reveal relative" style={`--reveal-delay: ${i * 100}ms`}>
+              <span class="absolute -left-[1.85rem] top-1.5 h-3 w-3 rounded-full border-2 border-violet-500 bg-surface-950" />
+              <p class="font-mono text-xs text-ink-500">{period(entry)}</p>
+              <h3 class="mt-1 font-semibold text-ink-100">{entry.title}</h3>
+              <p class="text-sm text-accent-300">
+                {entry.organization}
+                {entry.location && <span class="text-ink-500"> · {entry.location}</span>}
+              </p>
+              <ul class="mt-3 space-y-1.5 text-sm text-ink-500">
+                {entry.bullets.map((bullet) => (
+                  <li class="flex gap-2">
+                    <span class="text-accent-500">▹</span>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- Skills -->
+    <section class="mt-16">
+      <h2 class="reveal text-xl font-bold text-ink-100">
+        <span class="mr-2 font-mono text-accent-400">§</span>
+        {t('cv.skills')}
+      </h2>
+      <div class="mt-8 space-y-6">
+        {
+          data.skills.map((group, i) => (
+            <div class="reveal" style={`--reveal-delay: ${i * 100}ms`}>
+              <h3 class="font-mono text-sm text-ink-500">{group.category}</h3>
+              <div class="mt-2 flex flex-wrap gap-2">
+                {group.items.map((item) => (
+                  <span class="rounded-md bg-surface-700/60 px-2.5 py-1 font-mono text-xs text-accent-300">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Languages -->
+    <section class="mt-16">
+      <h2 class="reveal text-xl font-bold text-ink-100">
+        <span class="mr-2 font-mono text-accent-400">§</span>
+        {t('cv.languages')}
+      </h2>
+      <ul class="mt-6 space-y-2">
+        {
+          data.languages.map((entry) => (
+            <li class="reveal flex justify-between border-b border-surface-700/60 pb-2 text-sm">
+              <span class="text-ink-100">{entry.name}</span>
+              <span class="font-mono text-ink-500">{entry.level}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

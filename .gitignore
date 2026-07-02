@@ -1,0 +1,20 @@
+# Build output
+node_modules/
+dist/
+.astro/
+
+# Local tooling and knowledge-graph output (contains extracted personal data)
+.claude/
+graphify-out/
+
+# CV sources and compiled PDFs — kept out of the public repo because they
+# contain private contact details. Place cv-en.pdf / cv-de.pdf into public/
+# before building for deployment.
+cv/
+public/cv-*.pdf
+
+# Misc
+npm-debug.log*
+.DS_Store
+.env
+.env.*

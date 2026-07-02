@@ -1,0 +1,56 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getLocaleFromUrl, useTranslations } from '@/i18n/utils';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  revealDelay?: number;
+}
+
+const { project, revealDelay = 0 } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const { title, description, tech, repo, live } = project.data;
+---
+
+<article class="card reveal flex flex-col p-6" style={`--reveal-delay: ${revealDelay}ms`}>
+  <h3 class="text-lg font-semibold text-ink-100">{title}</h3>
+  <p class="mt-2 flex-1 text-sm text-ink-500">{description}</p>
+
+  <div class="mt-4 flex flex-wrap gap-2">
+    {
+      tech.map((item) => (
+        <span class="rounded-md bg-surface-700/60 px-2 py-0.5 font-mono text-xs text-accent-300">
+          {item}
+        </span>
+      ))
+    }
+  </div>
+
+  {
+    (repo || live) && (
+      <div class="mt-5 flex gap-4 border-t border-surface-600/40 pt-4 font-mono text-sm">
+        {repo && (
+          <a
+            href={repo}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-ink-300 transition-colors hover:text-accent-300"
+          >
+            {t('projects.source')} ↗
+          </a>
+        )}
+        {live && (
+          <a
+            href={live}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-ink-300 transition-colors hover:text-accent-300"
+          >
+            {t('projects.live')} ↗
+          </a>
+        )}
+      </div>
+    )
+  }
+</article>

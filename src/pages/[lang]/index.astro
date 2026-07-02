@@ -1,0 +1,229 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ShaderBackground from '@/components/ShaderBackground.astro';
+import PostCard from '@/components/PostCard.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import { locales, type Locale } from '@/i18n/ui';
+import { localePath, useTranslations } from '@/i18n/utils';
+import { getBlogPosts, getProjects } from '@/lib/content';
+import { SITE_CONFIG } from '@/config';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+
+const posts = (await getBlogPosts(lang)).slice(0, 2);
+const projects = (await getProjects(lang)).filter((p) => p.data.featured).slice(0, 3);
+
+// Phrases cycled by the hero typewriter — page-specific copy lives here
+// rather than in the global ui dictionary.
+const typedPhrases =
+  lang === 'de'
+    ? ['IT-Consultant', 'DevOps Engineer', 'Python-Entwickler', 'MSc-AI-Student']
+    : ['IT Consultant', 'DevOps Engineer', 'Python Developer', 'MSc AI Student'];
+
+const skillCards =
+  lang === 'de'
+    ? [
+        {
+          title: 'Software-Entwicklung',
+          text: 'Von der Idee bis zum Deployment: sauberer, getesteter Code und Architekturen, die auch in zwei Jahren noch Freude machen.',
+          icon: 'code',
+        },
+        {
+          title: 'Infrastruktur & DevOps',
+          text: 'Docker, CI/CD, Monitoring, Backups — Systeme, die sich selbst tragen. Diese Seite läuft auf meinem eigenen Homeserver.',
+          icon: 'server',
+        },
+        {
+          title: 'Web & Tooling',
+          text: 'Performante Websites, interne Tools und Automatisierung. Wenn etwas dreimal manuell gemacht wurde, wird es ein Skript.',
+          icon: 'sparkles',
+        },
+      ]
+    : [
+        {
+          title: 'Software Engineering',
+          text: 'From idea to deployment: clean, tested code and architectures that are still a joy to work with two years later.',
+          icon: 'code',
+        },
+        {
+          title: 'Infrastructure & DevOps',
+          text: 'Docker, CI/CD, monitoring, backups — systems that carry themselves. This site runs on my own homeserver.',
+          icon: 'server',
+        },
+        {
+          title: 'Web & Tooling',
+          text: 'Fast websites, internal tools and automation. Anything done manually three times becomes a script.',
+          icon: 'sparkles',
+        },
+      ];
+
+const icons: Record<string, string> = {
+  code: 'M6.75 7.5 3 11.25l3.75 3.75m10.5-7.5L21 11.25l-3.75 3.75M13.5 4.5l-3 15',
+  server:
+    'M5.25 14.25h13.5M5.25 14.25a2.25 2.25 0 0 1-2.25-2.25V6.75A2.25 2.25 0 0 1 5.25 4.5h13.5A2.25 2.25 0 0 1 21 6.75V12a2.25 2.25 0 0 1-2.25 2.25M5.25 14.25A2.25 2.25 0 0 0 3 16.5v.75A2.25 2.25 0 0 0 5.25 19.5h13.5A2.25 2.25 0 0 0 21 17.25v-.75a2.25 2.25 0 0 0-2.25-2.25M6.75 7.5h.008v.008H6.75V7.5Zm0 9h.008v.008H6.75V16.5Z',
+  sparkles:
+    'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z',
+};
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="relative flex min-h-screen items-center overflow-hidden">
+    <ShaderBackground />
+    <div class="mx-auto w-full max-w-5xl px-5 pt-16">
+      <p class="animate-fade-up font-mono text-accent-400" style="animation-delay: 100ms">
+        {t('hero.greeting')}
+      </p>
+      <h1
+        class="animate-fade-up mt-3 text-5xl font-bold tracking-tight text-ink-100 sm:text-7xl"
+        style="animation-delay: 250ms"
+      >
+        <span class="text-gradient">{SITE_CONFIG.name}</span>
+      </h1>
+      <p
+        class="animate-fade-up mt-5 h-8 font-mono text-lg text-ink-300 sm:text-xl"
+        style="animation-delay: 400ms"
+      >
+        <span id="typewriter" data-phrases={JSON.stringify(typedPhrases)}
+          >{typedPhrases[0]}</span
+        ><span class="animate-blink text-accent-400">▌</span>
+      </p>
+      <p
+        class="animate-fade-up mt-6 max-w-xl text-ink-500"
+        style="animation-delay: 550ms"
+      >
+        {t('hero.intro')}
+      </p>
+      <div class="animate-fade-up mt-9 flex flex-wrap gap-4" style="animation-delay: 700ms">
+        <a
+          href={localePath(lang, '/projects')}
+          class="rounded-xl bg-accent-500 px-6 py-3 font-semibold text-surface-950 transition hover:bg-accent-400 hover:shadow-[0_0_30px_-5px_var(--color-accent-500)]"
+        >
+          {t('hero.cta.projects')}
+        </a>
+        <a
+          href={localePath(lang, '/blog')}
+          class="rounded-xl border border-surface-600 px-6 py-3 font-semibold text-ink-100 transition hover:border-accent-500/60 hover:text-accent-300"
+        >
+          {t('hero.cta.blog')}
+        </a>
+      </div>
+    </div>
+    <a
+      href="#about"
+      class="absolute bottom-8 left-1/2 -translate-x-1/2 font-mono text-xs text-ink-700 transition-colors hover:text-accent-400"
+    >
+      {t('hero.scroll')} ↓
+    </a>
+  </section>
+
+  <!-- What I do -->
+  <section id="about" class="mx-auto max-w-5xl px-5 py-24">
+    <h2 class="reveal text-2xl font-bold tracking-tight text-ink-100">
+      <span class="mr-2 font-mono text-accent-400">01.</span>
+      {t('home.about.title')}
+    </h2>
+    <div class="mt-10 grid gap-5 sm:grid-cols-3">
+      {
+        skillCards.map((card, i) => (
+          <div class="card reveal p-6" style={`--reveal-delay: ${i * 120}ms`}>
+            <svg
+              class="h-8 w-8 text-accent-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d={icons[card.icon]} />
+            </svg>
+            <h3 class="mt-4 font-semibold text-ink-100">{card.title}</h3>
+            <p class="mt-2 text-sm text-ink-500">{card.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Featured projects -->
+  <section class="mx-auto max-w-5xl px-5 py-16">
+    <div class="reveal flex items-baseline justify-between">
+      <h2 class="text-2xl font-bold tracking-tight text-ink-100">
+        <span class="mr-2 font-mono text-accent-400">02.</span>
+        {t('home.featuredProjects')}
+      </h2>
+      <a
+        href={localePath(lang, '/projects')}
+        class="font-mono text-sm text-ink-500 transition-colors hover:text-accent-300"
+      >
+        {t('home.viewAll')} →
+      </a>
+    </div>
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project, i) => <ProjectCard project={project} revealDelay={i * 120} />)}
+    </div>
+  </section>
+
+  <!-- Latest posts -->
+  <section class="mx-auto max-w-5xl px-5 py-16 pb-28">
+    <div class="reveal flex items-baseline justify-between">
+      <h2 class="text-2xl font-bold tracking-tight text-ink-100">
+        <span class="mr-2 font-mono text-accent-400">03.</span>
+        {t('home.recentPosts')}
+      </h2>
+      <a
+        href={localePath(lang, '/blog')}
+        class="font-mono text-sm text-ink-500 transition-colors hover:text-accent-300"
+      >
+        {t('home.viewAll')} →
+      </a>
+    </div>
+    <div class="mt-10 grid gap-5 sm:grid-cols-2">
+      {posts.map((post, i) => <PostCard post={post} revealDelay={i * 120} />)}
+    </div>
+  </section>
+
+  <script>
+    // Typewriter cycling through hero phrases.
+    function startTypewriter() {
+      const el = document.getElementById('typewriter');
+      if (!el || el.dataset.running) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      el.dataset.running = 'true';
+
+      const phrases: string[] = JSON.parse(el.dataset.phrases ?? '[]');
+      if (phrases.length < 2) return;
+
+      let phrase = 0;
+      let pos = phrases[0].length;
+      let deleting = true;
+      let stopped = false;
+      document.addEventListener('astro:before-swap', () => (stopped = true), { once: true });
+
+      function tick() {
+        if (stopped || !el!.isConnected) return;
+        const current = phrases[phrase];
+        pos += deleting ? -1 : 1;
+        el!.textContent = current.slice(0, pos);
+
+        let delay = deleting ? 40 : 75;
+        if (!deleting && pos === current.length) {
+          deleting = true;
+          delay = 2600; // linger on the full phrase
+        } else if (deleting && pos === 0) {
+          deleting = false;
+          phrase = (phrase + 1) % phrases.length;
+          delay = 350;
+        }
+        setTimeout(tick, delay);
+      }
+      setTimeout(tick, 2200);
+    }
+    document.addEventListener('astro:page-load', startTypewriter);
+  </script>
+</BaseLayout>

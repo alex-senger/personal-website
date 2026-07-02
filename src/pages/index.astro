@@ -1,0 +1,35 @@
+---
+// Root entry: picks the visitor's preferred language client-side and
+// redirects. Falls back to English via <meta refresh> when JS is off.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting…</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      const target = (navigator.language || 'en').toLowerCase().startsWith('de')
+        ? '/de/'
+        : '/en/';
+      location.replace(target);
+    </script>
+    <noscript>
+      <meta http-equiv="refresh" content="0; url=/en/" />
+    </noscript>
+    <style>
+      body {
+        background: #060609;
+      }
+    </style>
+  </head>
+  <body>
+    <p style="color:#8b8ba3;font-family:system-ui;text-align:center;margin-top:20vh">
+      <a href="/en/" style="color:#38bdf8">English</a> ·
+      <a href="/de/" style="color:#38bdf8">Deutsch</a>
+    </p>
+  </body>
+</html>

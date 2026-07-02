@@ -1,0 +1,44 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { locales, type Locale } from '@/i18n/ui';
+import { localePath, useTranslations } from '@/i18n/utils';
+import { getBlogPosts } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of locales) {
+    const posts = await getBlogPosts(lang);
+    const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+    for (const tag of tags) {
+      paths.push({
+        params: { lang, tag },
+        props: { posts: posts.filter((p) => p.data.tags.includes(tag)) },
+      });
+    }
+  }
+  return paths;
+}
+
+const lang = Astro.params.lang as Locale;
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={`${t('blog.taggedWith')} #${tag}`}>
+  <div class="mx-auto max-w-5xl px-5 pt-32 pb-24">
+    <a
+      href={localePath(lang, '/blog')}
+      class="font-mono text-sm text-ink-500 transition-colors hover:text-accent-300"
+    >
+      ← {t('blog.backToBlog')}
+    </a>
+    <h1 class="mt-8 text-4xl font-bold tracking-tight text-ink-100">
+      {t('blog.taggedWith')} <span class="text-gradient">#{tag}</span>
+    </h1>
+    <div class="mt-12 grid gap-5 sm:grid-cols-2">
+      {posts.map((post, i) => <PostCard post={post} revealDelay={(i % 2) * 120} />)}
+    </div>
+  </div>
+</BaseLayout>

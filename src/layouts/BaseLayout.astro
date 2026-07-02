@@ -1,0 +1,91 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '@/styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { getLocaleFromUrl, switchLocalePath, useTranslations } from '@/i18n/utils';
+import { locales } from '@/i18n/ui';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const { title, description = t('site.description') } = Astro.props;
+const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={locale} class="js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    {
+      locales.map((l) => (
+        <link
+          rel="alternate"
+          hreflang={l}
+          href={new URL(switchLocalePath(Astro.url, l), Astro.site)}
+        />
+      ))
+    }
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={pageTitle}
+      href={`/${locale}/rss.xml`}
+    />
+    <ClientRouter />
+    <script is:inline>
+      // Marker for CSS that must only apply when JS runs (scroll-reveal).
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Scroll-reveal via IntersectionObserver; re-attached after each
+      // view transition since the DOM is swapped.
+      function setupReveals() {
+        const els = document.querySelectorAll<HTMLElement>('.reveal:not(.revealed)');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach((el) => el.classList.add('revealed'));
+          return;
+        }
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+        );
+        els.forEach((el) => observer.observe(el));
+      }
+      document.addEventListener('astro:page-load', setupReveals);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+node_modules
+dist
+.astro
+.git
+.gitignore
+.claude
+graphify-out
+cv
+README.md
+docker-compose.yml
+.env
+.env.*

@@ -1,0 +1,219 @@
+---
+// Full-viewport animated WebGL background: an aurora-like field rendered by a
+// hand-written fragment shader, with subtle mouse parallax. Falls back to a
+// static CSS gradient when WebGL is unavailable or reduced motion is set.
+---
+
+<div class="shader-wrap absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+  <canvas id="hero-canvas" class="h-full w-full"></canvas>
+  <div class="shader-fallback absolute inset-0"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-surface-950"></div>
+</div>
+
+<style>
+  .shader-fallback {
+    opacity: 1;
+    transition: opacity 1.2s ease;
+    background:
+      radial-gradient(60% 50% at 20% 20%, rgba(6, 182, 212, 0.18), transparent 70%),
+      radial-gradient(50% 45% at 80% 30%, rgba(139, 92, 246, 0.16), transparent 70%),
+      radial-gradient(70% 60% at 50% 90%, rgba(56, 189, 248, 0.08), transparent 70%),
+      #060609;
+  }
+  .shader-wrap.gl-active .shader-fallback {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  const VERT = `
+attribute vec2 aPos;
+void main() {
+  gl_Position = vec4(aPos, 0.0, 1.0);
+}`;
+
+  const FRAG = `
+precision highp float;
+uniform vec2 uRes;
+uniform float uTime;
+uniform vec2 uMouse;
+
+// 2D value noise + fbm — small, fast, and good enough for an aurora field.
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+}
+
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(
+    mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+    mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+    u.y
+  );
+}
+
+float fbm(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 5; i++) {
+    v += a * noise(p);
+    p = p * 2.03 + vec2(11.7, 5.3);
+    a *= 0.5;
+  }
+  return v;
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / uRes;
+  vec2 p = uv * vec2(uRes.x / uRes.y, 1.0) * 2.2;
+
+  float t = uTime * 0.06;
+  vec2 drift = uMouse * 0.25;
+
+  // Domain-warped fbm: fbm fed with fbm gives the flowing, organic look.
+  vec2 q = vec2(fbm(p + t + drift), fbm(p - t * 0.7));
+  vec2 r = vec2(fbm(p + q * 1.6 + vec2(1.7, 9.2) + t * 0.4),
+                fbm(p + q * 1.6 + vec2(8.3, 2.8) - t * 0.3));
+  float f = fbm(p + r * 1.8);
+
+  vec3 deep   = vec3(0.024, 0.024, 0.035);
+  vec3 cyan   = vec3(0.023, 0.714, 0.831);
+  vec3 violet = vec3(0.545, 0.361, 0.965);
+  vec3 sky    = vec3(0.219, 0.741, 0.972);
+
+  vec3 col = deep;
+  col = mix(col, cyan * 0.55, smoothstep(0.25, 0.85, f) * q.x);
+  col = mix(col, violet * 0.5, smoothstep(0.35, 0.95, r.y) * 0.8);
+  col = mix(col, sky * 0.45, smoothstep(0.55, 1.0, f * r.x));
+
+  // Vignette so edges melt into the page background.
+  float vig = smoothstep(1.25, 0.35, length(uv - 0.5) * 1.6);
+  col *= vig;
+
+  // Subtle film grain to avoid banding on the dark gradient.
+  col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.015;
+
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+  function initShader(): (() => void) | null {
+    const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return null;
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const gl = canvas.getContext('webgl', { antialias: false, alpha: false });
+    if (!gl) return null; // CSS fallback stays visible
+
+    function compile(type: number, src: string): WebGLShader | null {
+      const s = gl!.createShader(type);
+      if (!s) return null;
+      gl!.shaderSource(s, src);
+      gl!.compileShader(s);
+      if (!gl!.getShaderParameter(s, gl!.COMPILE_STATUS)) {
+        console.error(gl!.getShaderInfoLog(s));
+        return null;
+      }
+      return s;
+    }
+
+    const vs = compile(gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return null;
+
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    gl.useProgram(prog);
+
+    // Fullscreen triangle
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, 'aPos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes = gl.getUniformLocation(prog, 'uRes');
+    const uTime = gl.getUniformLocation(prog, 'uTime');
+    const uMouse = gl.getUniformLocation(prog, 'uMouse');
+
+    // Render at reduced resolution — fbm per pixel is heavy and the result is
+    // soft anyway, so 0.5x looks identical and quarters the fragment work.
+    const scale = 0.5 * Math.min(window.devicePixelRatio || 1, 2);
+    function resize() {
+      const w = Math.floor(canvas!.clientWidth * scale);
+      const h = Math.floor(canvas!.clientHeight * scale);
+      if (canvas!.width !== w || canvas!.height !== h) {
+        canvas!.width = w;
+        canvas!.height = h;
+        gl!.viewport(0, 0, w, h);
+      }
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let mx = 0;
+    let my = 0;
+    let tx = 0;
+    let ty = 0;
+    function onMove(e: PointerEvent) {
+      tx = (e.clientX / window.innerWidth) * 2 - 1;
+      ty = (e.clientY / window.innerHeight) * 2 - 1;
+    }
+    window.addEventListener('pointermove', onMove);
+
+    let raf = 0;
+    let running = true;
+    const start = performance.now();
+
+    function frame() {
+      if (!running) return;
+      // Ease mouse toward target for a weighty parallax feel.
+      mx += (tx - mx) * 0.04;
+      my += (ty - my) * 0.04;
+      gl!.uniform2f(uRes, canvas!.width, canvas!.height);
+      gl!.uniform1f(uTime, (performance.now() - start) / 1000);
+      gl!.uniform2f(uMouse, mx, -my);
+      gl!.drawArrays(gl!.TRIANGLES, 0, 3);
+      if (!reduced) raf = requestAnimationFrame(frame);
+    }
+
+    // Pause when the tab is hidden; resume on return.
+    function onVisibility() {
+      if (document.hidden) {
+        running = false;
+        cancelAnimationFrame(raf);
+      } else if (!reduced) {
+        running = true;
+        raf = requestAnimationFrame(frame);
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibility);
+
+    canvas.closest('.shader-wrap')?.classList.add('gl-active');
+    frame(); // reduced motion: renders exactly one frame
+
+    return function cleanup() {
+      running = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('pointermove', onMove);
+      document.removeEventListener('visibilitychange', onVisibility);
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    };
+  }
+
+  let cleanup: (() => void) | null = null;
+  document.addEventListener('astro:page-load', () => {
+    cleanup?.();
+    cleanup = initShader();
+  });
+  document.addEventListener('astro:before-swap', () => {
+    cleanup?.();
+    cleanup = null;
+  });
+</script>

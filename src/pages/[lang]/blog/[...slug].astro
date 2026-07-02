@@ -1,0 +1,65 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { locales, type Locale } from '@/i18n/ui';
+import { formatDate, localePath, useTranslations } from '@/i18n/utils';
+import { entrySlug, getBlogPosts, readingMinutes } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of locales) {
+    const posts = await getBlogPosts(lang);
+    for (const post of posts) {
+      paths.push({ params: { lang, slug: entrySlug(post) }, props: { post } });
+    }
+  }
+  return paths;
+}
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="mx-auto max-w-3xl px-5 pt-32 pb-24">
+    <a
+      href={localePath(lang, '/blog')}
+      class="font-mono text-sm text-ink-500 transition-colors hover:text-accent-300"
+    >
+      ← {t('blog.backToBlog')}
+    </a>
+
+    <header class="mt-8">
+      <div class="flex items-center gap-3 font-mono text-sm text-ink-500">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {formatDate(post.data.pubDate, lang)}
+        </time>
+        <span aria-hidden="true">·</span>
+        <span>{readingMinutes(post.body)} {t('blog.minRead')}</span>
+      </div>
+      <h1 class="mt-4 text-4xl font-bold tracking-tight text-ink-100">
+        {post.data.title}
+      </h1>
+      {
+        post.data.tags.length > 0 && (
+          <div class="mt-5 flex flex-wrap gap-2">
+            {post.data.tags.map((tag) => (
+              <a
+                href={localePath(lang, `/blog/tags/${tag}`)}
+                class="rounded-full border border-surface-600/50 px-3 py-1 font-mono text-xs text-ink-500 transition-colors hover:border-accent-500/60 hover:text-accent-300"
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <div class="prose mt-10">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

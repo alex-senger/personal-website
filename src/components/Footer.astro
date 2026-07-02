@@ -1,0 +1,44 @@
+---
+import { getLocaleFromUrl, useTranslations } from '@/i18n/utils';
+import { SITE_CONFIG } from '@/config';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-surface-600/30">
+  <div
+    class="mx-auto flex max-w-5xl flex-col items-center gap-4 px-5 py-10 text-sm text-ink-500 sm:flex-row sm:justify-between"
+  >
+    <p>{`© ${year} ${SITE_CONFIG.name}. `}{t('footer.rights')}</p>
+
+    <div class="flex items-center gap-5">
+      <a
+        href={`mailto:${SITE_CONFIG.email}`}
+        class="transition-colors hover:text-accent-400"
+      >
+        {t('footer.contact')}
+      </a>
+      <a
+        href={SITE_CONFIG.socials.github}
+        rel="noopener noreferrer"
+        target="_blank"
+        class="transition-colors hover:text-accent-400"
+      >
+        GitHub
+      </a>
+      <a
+        href={SITE_CONFIG.socials.linkedin}
+        rel="noopener noreferrer"
+        target="_blank"
+        class="transition-colors hover:text-accent-400"
+      >
+        LinkedIn
+      </a>
+    </div>
+  </div>
+  <p class="pb-6 text-center font-mono text-xs text-ink-700">
+    {t('footer.builtWith')}
+  </p>
+</footer>
