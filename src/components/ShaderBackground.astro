@@ -38,7 +38,7 @@ uniform vec2 uRes;
 uniform float uTime;
 uniform vec2 uMouse;
 
-// 2D value noise + fbm — small, fast, and good enough for an aurora field.
+// 2D value noise + fbm: small, fast, and good enough for an aurora field.
 float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
 }
@@ -141,7 +141,7 @@ void main() {
     const uTime = gl.getUniformLocation(prog, 'uTime');
     const uMouse = gl.getUniformLocation(prog, 'uMouse');
 
-    // Render at reduced resolution — fbm per pixel is heavy and the result is
+    // Render at reduced resolution; fbm per pixel is heavy and the result is
     // soft anyway, so 0.5x looks identical and quarters the fragment work.
     const scale = 0.5 * Math.min(window.devicePixelRatio || 1, 2);
     function resize() {

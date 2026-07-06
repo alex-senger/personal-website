@@ -18,7 +18,7 @@ const t = useTranslations(lang);
 const posts = (await getBlogPosts(lang)).slice(0, 2);
 const projects = (await getProjects(lang)).filter((p) => p.data.featured).slice(0, 3);
 
-// Phrases cycled by the hero typewriter — page-specific copy lives here
+// Phrases cycled by the hero typewriter; page-specific copy lives here
 // rather than in the global ui dictionary.
 const typedPhrases =
   lang === 'de'
@@ -35,7 +35,7 @@ const skillCards =
         },
         {
           title: 'Infrastruktur & DevOps',
-          text: 'Docker, CI/CD, Monitoring, Backups — Systeme, die sich selbst tragen. Diese Seite läuft auf meinem eigenen Homeserver.',
+          text: 'Docker, CI/CD, Monitoring, Backups: Systeme, die sich selbst tragen. Diese Seite läuft auf meinem eigenen Homeserver.',
           icon: 'server',
         },
         {
@@ -52,7 +52,7 @@ const skillCards =
         },
         {
           title: 'Infrastructure & DevOps',
-          text: 'Docker, CI/CD, monitoring, backups — systems that carry themselves. This site runs on my own homeserver.',
+          text: 'Docker, CI/CD, monitoring, backups: systems that carry themselves. This site runs on my own homeserver.',
           icon: 'server',
         },
         {

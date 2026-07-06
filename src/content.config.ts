@@ -1,7 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// Posts live in src/content/blog/<locale>/<slug>.md — the folder decides
+// Posts live in src/content/blog/<locale>/<slug>.md; the folder decides
 // which language version of the site the post appears on.
 const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.md' }),

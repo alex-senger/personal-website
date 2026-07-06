@@ -14,7 +14,7 @@ const t = useTranslations(lang);
 const data = cv[lang];
 
 function period(entry: CvEntry): string {
-  return `${entry.from} — ${entry.to ?? t('cv.present')}`;
+  return `${entry.from} - ${entry.to ?? t('cv.present')}`;
 }
 ---
 

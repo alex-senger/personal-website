@@ -1,4 +1,4 @@
-// CV content — sourced from the Typst CV (basic-resume). The phone number is
+// CV content, sourced from the Typst CV (basic-resume). The phone number is
 // deliberately omitted on the website; it stays in the downloadable PDF.
 import type { Locale } from '@/i18n/ui';
 
@@ -6,7 +6,7 @@ export interface CvEntry {
   title: string;
   organization: string;
   location?: string;
-  /** e.g. 'Apr 2024' — rendered as given */
+  /** e.g. 'Apr 2024', rendered as given */
   from: string;
   /** omit for "present" */
   to?: string;
@@ -38,7 +38,7 @@ export const cv: Record<Locale, CvData> = {
         ],
       },
       {
-        title: 'Tutor — Software Technology',
+        title: 'Tutor for Software Technology',
         organization: 'University of Bonn',
         location: 'Bonn, Germany',
         from: 'Oct 2023',
@@ -54,7 +54,7 @@ export const cv: Record<Locale, CvData> = {
         from: 'Nov 2021',
         to: 'Oct 2022',
         bullets: [
-          'Taught IT and computer science to students (grades 5–10) and supervised school events and activities.',
+          'Taught IT and computer science to students (grades 5-10) and supervised school events and activities.',
         ],
       },
     ],
@@ -81,7 +81,7 @@ export const cv: Record<Locale, CvData> = {
     ],
     projects: [
       {
-        title: 'Applied Software Development Project Group — Project Member',
+        title: 'Applied Software Development Project Group (Project Member)',
         organization: 'University of Bonn',
         from: 'Apr 2023',
         to: 'Aug 2023',
@@ -137,7 +137,7 @@ export const cv: Record<Locale, CvData> = {
         ],
       },
       {
-        title: 'Tutor — Softwaretechnologie',
+        title: 'Tutor für Softwaretechnologie',
         organization: 'Universität Bonn',
         location: 'Bonn, Deutschland',
         from: 'Okt 2023',
@@ -153,7 +153,7 @@ export const cv: Record<Locale, CvData> = {
         from: 'Nov 2021',
         to: 'Okt 2022',
         bullets: [
-          'IT und Informatik für Schüler:innen (Klassen 5–10) unterrichtet sowie Schulveranstaltungen und Aktivitäten betreut.',
+          'IT und Informatik für Schüler:innen (Klassen 5-10) unterrichtet sowie Schulveranstaltungen und Aktivitäten betreut.',
         ],
       },
     ],
@@ -180,7 +180,7 @@ export const cv: Record<Locale, CvData> = {
     ],
     projects: [
       {
-        title: 'Projektgruppe Angewandte Softwareentwicklung — Projektmitglied',
+        title: 'Projektgruppe Angewandte Softwareentwicklung (Projektmitglied)',
         organization: 'Universität Bonn',
         from: 'Apr 2023',
         to: 'Aug 2023',

@@ -4,7 +4,7 @@ export const defaultLocale: Locale = 'en';
 
 export const ui = {
   en: {
-    'site.title': 'Alex Senger — Software & IT',
+    'site.title': 'Alex Senger · Software & IT',
     'site.description':
       'Personal website of Alex Senger: projects, blog and CV of an IT consultant and DevOps engineer.',
     'nav.home': 'Home',
@@ -34,7 +34,7 @@ export const ui = {
     'blog.taggedWith': 'Posts tagged',
     'blog.allTags': 'All tags',
     'blog.backToBlog': 'Back to blog',
-    'blog.empty': 'No posts yet — check back soon.',
+    'blog.empty': 'No posts yet, check back soon.',
 
     'projects.title': 'Projects',
     'projects.description': 'A selection of things I have built and maintain.',
@@ -60,7 +60,7 @@ export const ui = {
     'notFound.back': 'Back to home',
   },
   de: {
-    'site.title': 'Alex Senger — Software & IT',
+    'site.title': 'Alex Senger · Software & IT',
     'site.description':
       'Persönliche Website von Alex Senger: Projekte, Blog und Lebenslauf eines IT-Consultants und DevOps Engineers.',
     'nav.home': 'Start',
@@ -91,7 +91,7 @@ export const ui = {
     'blog.taggedWith': 'Beiträge mit Tag',
     'blog.allTags': 'Alle Tags',
     'blog.backToBlog': 'Zurück zum Blog',
-    'blog.empty': 'Noch keine Beiträge — bald geht es los.',
+    'blog.empty': 'Noch keine Beiträge, bald geht es los.',
 
     'projects.title': 'Projekte',
     'projects.description': 'Eine Auswahl an Dingen, die ich gebaut habe und pflege.',

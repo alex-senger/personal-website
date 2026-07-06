@@ -1,4 +1,4 @@
-// Central site configuration — edit this file to personalize the site.
+// Central site configuration. Edit this file to personalize the site.
 export const SITE_CONFIG = {
   name: 'Alex Senger',
   // Set to true to enable the blog: nav entry, landing-page section,
