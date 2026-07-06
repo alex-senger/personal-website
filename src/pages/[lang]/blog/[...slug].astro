@@ -4,8 +4,10 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { locales, type Locale } from '@/i18n/ui';
 import { formatDate, localePath, useTranslations } from '@/i18n/utils';
 import { entrySlug, getBlogPosts, readingMinutes } from '@/lib/content';
+import { SITE_CONFIG } from '@/config';
 
 export async function getStaticPaths() {
+  if (!SITE_CONFIG.blogEnabled) return [];
   const paths = [];
   for (const lang of locales) {
     const posts = await getBlogPosts(lang);

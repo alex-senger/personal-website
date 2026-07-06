@@ -3,8 +3,10 @@ import type { APIRoute } from 'astro';
 import { locales, type Locale } from '@/i18n/ui';
 import { useTranslations, localePath } from '@/i18n/utils';
 import { entrySlug, getBlogPosts } from '@/lib/content';
+import { SITE_CONFIG } from '@/config';
 
 export function getStaticPaths() {
+  if (!SITE_CONFIG.blogEnabled) return [];
   return locales.map((lang) => ({ params: { lang } }));
 }
 

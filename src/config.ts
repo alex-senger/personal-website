@@ -1,6 +1,9 @@
 // Central site configuration — edit this file to personalize the site.
 export const SITE_CONFIG = {
   name: 'Alex Senger',
+  // Set to true to enable the blog: nav entry, landing-page section,
+  // blog/tag pages and RSS feeds all come back with this one flag.
+  blogEnabled: false,
   email: 'alex@senger-solutions.com',
   socials: {
     github: 'https://github.com/alex-senger',

@@ -9,7 +9,7 @@ const t = useTranslations(locale);
 const navItems = [
   { href: localePath(locale, '/'), label: t('nav.home') },
   { href: localePath(locale, '/projects'), label: t('nav.projects') },
-  { href: localePath(locale, '/blog'), label: t('nav.blog') },
+  ...(SITE_CONFIG.blogEnabled ? [{ href: localePath(locale, '/blog'), label: t('nav.blog') }] : []),
   { href: localePath(locale, '/cv'), label: t('nav.cv') },
 ];
 

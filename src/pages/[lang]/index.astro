@@ -107,10 +107,10 @@ const icons: Record<string, string> = {
           {t('hero.cta.projects')}
         </a>
         <a
-          href={localePath(lang, '/blog')}
+          href={localePath(lang, SITE_CONFIG.blogEnabled ? '/blog' : '/cv')}
           class="rounded-xl border border-surface-600 px-6 py-3 font-semibold text-ink-100 transition hover:border-accent-500/60 hover:text-accent-300"
         >
-          {t('hero.cta.blog')}
+          {SITE_CONFIG.blogEnabled ? t('hero.cta.blog') : t('hero.cta.cv')}
         </a>
       </div>
     </div>
@@ -169,24 +169,30 @@ const icons: Record<string, string> = {
     </div>
   </section>
 
-  <!-- Latest posts -->
-  <section class="mx-auto max-w-5xl px-5 py-16 pb-28">
-    <div class="reveal flex items-baseline justify-between">
-      <h2 class="text-2xl font-bold tracking-tight text-ink-100">
-        <span class="mr-2 font-mono text-accent-400">03.</span>
-        {t('home.recentPosts')}
-      </h2>
-      <a
-        href={localePath(lang, '/blog')}
-        class="font-mono text-sm text-ink-500 transition-colors hover:text-accent-300"
-      >
-        {t('home.viewAll')} →
-      </a>
-    </div>
-    <div class="mt-10 grid gap-5 sm:grid-cols-2">
-      {posts.map((post, i) => <PostCard post={post} revealDelay={i * 120} />)}
-    </div>
-  </section>
+  <!-- Latest posts (only when the blog is enabled) -->
+  {
+    SITE_CONFIG.blogEnabled && (
+      <section class="mx-auto max-w-5xl px-5 py-16 pb-28">
+        <div class="reveal flex items-baseline justify-between">
+          <h2 class="text-2xl font-bold tracking-tight text-ink-100">
+            <span class="mr-2 font-mono text-accent-400">03.</span>
+            {t('home.recentPosts')}
+          </h2>
+          <a
+            href={localePath(lang, '/blog')}
+            class="font-mono text-sm text-ink-500 transition-colors hover:text-accent-300"
+          >
+            {t('home.viewAll')} →
+          </a>
+        </div>
+        <div class="mt-10 grid gap-5 sm:grid-cols-2">
+          {posts.map((post, i) => (
+            <PostCard post={post} revealDelay={i * 120} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   <script>
     // Typewriter cycling through hero phrases.

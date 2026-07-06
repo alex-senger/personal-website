@@ -19,6 +19,7 @@ export const ui = {
       'IT consultant and DevOps engineer, currently on sabbatical for an MSc in Artificial Intelligence. Passionate about Kubernetes, databases, Python and self-hosting. This site is my playground, portfolio and notebook at once.',
     'hero.cta.projects': 'View projects',
     'hero.cta.blog': 'Read the blog',
+    'hero.cta.cv': 'View my CV',
     'hero.scroll': 'Scroll',
 
     'home.about.title': 'What I do',
@@ -74,6 +75,7 @@ export const ui = {
       'IT-Consultant und DevOps Engineer, derzeit im Sabbatical für einen MSc in Artificial Intelligence. Begeistert von Kubernetes, Datenbanken, Python und Self-Hosting. Diese Seite ist Spielwiese, Portfolio und Notizbuch zugleich.',
     'hero.cta.projects': 'Projekte ansehen',
     'hero.cta.blog': 'Zum Blog',
+    'hero.cta.cv': 'Zum Lebenslauf',
     'hero.scroll': 'Scrollen',
 
     'home.about.title': 'Was ich mache',
