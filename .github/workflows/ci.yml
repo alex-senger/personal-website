@@ -3,10 +3,12 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
   # Weekly rebuild so the published image picks up base-image (nginx/alpine)
-  # security updates even when no code changes
+  # security updates even when no code changes. Rebuilds the latest release
+  # tag, never main HEAD, so only tagged commits ever become images.
   schedule:
     - cron: '17 4 * * 1'
 
@@ -45,44 +47,66 @@ jobs:
           path: dist/
           retention-days: 7
 
+  # Runs for release tags (build + publish), PRs (build verification only)
+  # and the weekly schedule (rebuild latest tag on fresh bases). Plain pushes
+  # to main deliberately skip this job: images exist only for tagged commits.
   docker:
     name: Docker image
     runs-on: ubuntu-latest
     needs: check-and-build
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'pull_request' || github.event_name == 'schedule'
     permissions:
       contents: read
       packages: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          # Full history so the schedule run can resolve the latest tag.
+          fetch-depth: 0
+
+      - name: Resolve release ref
+        id: rel
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
+            TAG=$(git tag --list 'v*' --sort=-v:refname | head -1)
+            if [[ -z "$TAG" ]]; then
+              echo "No release tag exists yet; nothing to rebuild."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            git checkout --quiet "$TAG"
+            echo "version=$TAG" >> "$GITHUB_OUTPUT"
+          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "version=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+          else
+            # PR verification build; never pushed, tag name is irrelevant.
+            echo "version=pr-verify" >> "$GITHUB_OUTPUT"
+          fi
+          echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
 
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        if: steps.rel.outputs.skip != 'true'
 
       - name: Log in to GHCR
-        if: github.event_name != 'pull_request'
+        if: steps.rel.outputs.skip != 'true' && github.event_name != 'pull_request'
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker metadata
-        id: meta
-        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=sha
-
-      # PRs only verify the image builds; pushes to main and the weekly
-      # scheduled rebuild also publish it.
-      - name: Build (and push on main)
+      - name: Build (and push for releases)
+        if: steps.rel.outputs.skip != 'true'
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ steps.rel.outputs.version }}
+            ghcr.io/${{ github.repository }}:sha-${{ steps.rel.outputs.sha }}
           build-args: |
             SITE_URL=${{ vars.SITE_URL || 'https://example.com' }}
           cache-from: type=gha

@@ -74,10 +74,17 @@ Compatible with Podman: `podman compose up -d --build`.
 
 ## CI
 
-[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on every push and pull request to `main`:
+[.github/workflows/ci.yml](.github/workflows/ci.yml):
 
-1. **Type check & build**: `astro check` + `astro build`, with the `dist/` output uploaded as an artifact
-2. **Docker image**: verifies the image builds on PRs; on pushes to `main` it also publishes to GitHub Container Registry as `ghcr.io/<owner>/<repo>:latest` (plus a `sha-…` tag)
+1. **Type check & build** runs on every push and pull request to `main` (`astro check` + `astro build`, with the `dist/` output uploaded as an artifact)
+2. **Docker image** is published to GitHub Container Registry **only for version tags** (`v*`), as `ghcr.io/<owner>/<repo>:latest`, `:vX.Y.Z` and `:sha-…`. PRs verify the image still builds without publishing; plain pushes to `main` publish nothing. A weekly scheduled run rebuilds the latest tag on fresh base images so security patches arrive without a release.
+
+Releasing (and thereby deploying) is:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
 
 Set the repository variable `SITE_URL` (Settings → Secrets and variables → Actions → Variables) to bake the production URL into the published image; it defaults to `https://example.com`. A homeserver can then deploy by pulling the prebuilt image instead of building locally:
 
