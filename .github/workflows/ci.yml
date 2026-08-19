@@ -6,11 +6,6 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main]
-  # Weekly rebuild so the published image picks up base-image (nginx/alpine)
-  # security updates even when no code changes. Rebuilds the latest release
-  # tag, never main HEAD, so only tagged commits ever become images.
-  schedule:
-    - cron: '17 4 * * 1'
 
 permissions:
   contents: read
@@ -47,9 +42,6 @@ jobs:
           path: dist/
           retention-days: 7
 
-  # Runs for release tags (build + publish), PRs (build verification only)
-  # and the weekly schedule (rebuild latest tag on fresh bases). Plain pushes
-  # to main deliberately skip this job: images exist only for tagged commits.
   docker:
     name: Docker image
     runs-on: ubuntu-latest
@@ -111,6 +103,4 @@ jobs:
             SITE_URL=${{ vars.SITE_URL || 'https://example.com' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # Weekly rebuilds must not reuse cached layers for the base image;
-          # pull ensures the freshest nginx/node bases are used.
           pull: true
